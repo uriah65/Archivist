@@ -10,7 +10,7 @@ namespace ArchiveLib.Tests
         [TestMethod]
         public void Archived_FileInfo()
         {
-           string archiveFilePath = ConstantsPR.PATH_BONLY + @"\t.txt";
+           string archiveFilePath = ConstantsPR.PATH_ARCHIVE + @"\t.txt";
            using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword))
            {
                 FileInfo info = archive.GetFileInfo(archiveFilePath);
@@ -21,7 +21,7 @@ namespace ArchiveLib.Tests
         [TestMethod]
         public void Archived_FileInfoNegative()
         {
-            string archiveFilePath = ConstantsPR.PATH_BONLY + @"\t.txt";
+            string archiveFilePath = ConstantsPR.PATH_ARCHIVE + @"\t.txt";
             using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword))
             {
                 FileInfo info = archive.GetFileInfo(archiveFilePath);

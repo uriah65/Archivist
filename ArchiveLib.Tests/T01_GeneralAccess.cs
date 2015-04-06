@@ -12,39 +12,39 @@ namespace ArchiveLib.Tests
         {
             using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, "XXXXX"))
             {
-                archive.WrapAction(() => Act(ConstantsPR.PATH_AONLY));
+                archive.WrapAction(() => Act(ConstantsPR.PATH_COMMON));
             }
         }
 
         [TestMethod]
-        public void User_Access_To_A()
+        public void User_Access_To_Common()
         {
             using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword))
             {
-                archive.WrapAction(() => Act(ConstantsPR.PATH_AONLY));
+                archive.WrapAction(() => Act(ConstantsPR.PATH_COMMON));
             }
         }
 
         [TestMethod]
         [ExpectedException(typeof(System.UnauthorizedAccessException))]
-        public void User_No_Access_To_B()
+        public void User_Access_To_Archive()
         {
             using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword))
             {
-                archive.WrapAction(() => Act(ConstantsPR.PATH_BONLY));
+                archive.WrapAction(() => Act(ConstantsPR.PATH_ARCHIVE));
             }
         }
 
         [TestMethod]
         public void Default_Access_To_A()
         {
-            Act(ConstantsPR.PATH_AONLY);
+            Act(ConstantsPR.PATH_COMMON);
         }
 
         [TestMethod]
         public void Default_Access_To_B()
         {
-            Act(ConstantsPR.PATH_BONLY);
+            Act(ConstantsPR.PATH_ARCHIVE);
         }
 
         private object Act(string path)

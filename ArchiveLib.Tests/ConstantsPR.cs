@@ -2,8 +2,8 @@
 {
     public static class ConstantsPR
     {
-        public const string PATH_BONLY = @"..\..\BOnly";
-        public const string PATH_AONLY = @"..\..\AOnly";
+        public const string PATH_ARCHIVE = @"..\..\Archive";
+        public const string PATH_COMMON = @"..\..\Common";
 
         public static string UserDomain { get; private set; }
 

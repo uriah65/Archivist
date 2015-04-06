@@ -63,8 +63,8 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="AOnly\t.txt" />
-    <Content Include="BOnly\t.txt" />
+    <Content Include="Archive\t.txt" />
+    <Content Include="Common\t.txt" />
     <Content Include="_Read_Me.txt" />
   </ItemGroup>
   <Choose>

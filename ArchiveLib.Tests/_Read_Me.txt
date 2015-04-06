@@ -7,4 +7,4 @@ username
 userpassword
 
 
-2). Test folder BOnly should not be no accessible to above user
+2). Test folder Archive should be accessible to above user, but denied for current user.
