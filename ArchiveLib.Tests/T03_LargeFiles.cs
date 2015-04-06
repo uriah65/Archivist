@@ -14,13 +14,13 @@ namespace ArchiveLib.Tests
             string sourceFilePath = @"C:\temp\" + largefileName;
             string archiveFilePath = ConstantsPR.PATH_ARCHIVE + @"\" + largefileName;
 
-            long filelength = (new FileInfo(sourceFilePath)).Length;
+            long ln = (new FileInfo(sourceFilePath)).Length;
 
             Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword);
 
             archive.CopyToArchiveLarge(sourceFilePath, archiveFilePath);
             FileInfo info = archive.GetFileInfo(archiveFilePath);
-            Assert.AreEqual(filelength, info.Length, "File has not been copied to archive.");
+            Assert.AreEqual(ln, info.Length, "File has not been copied to archive.");
 
             archive.DeleteInArchive(archiveFilePath);
 
