@@ -13,8 +13,12 @@ namespace ArchiveLib
 
         FileInfo GetFileInfo(string archiveFilePath);
 
-        //void CopyToArchive();
-        //void CopyFromArchive();
+        void CopyToArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true);
+
+        void CopyFromArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true);
+
+        void DeleteInArchive(string destinationFilePath, bool exceptionIfNotFound = false);
+
         //void CopyToArchiveBt();
         //void CopyFromArchiveBt();
         //void CopyWithingArchive();

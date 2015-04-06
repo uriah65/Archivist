@@ -10,22 +10,27 @@ namespace ArchiveLib.Tests
         [ExpectedException(typeof(System.ApplicationException))]
         public void Invalid_Credentials()
         {
-            using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, "XXXXX"))
-            {
-                CheckFile(ConstantsPR.PATH_COMMON);
-            }
+            Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, "XXXXX");
+            archive.WrapAction<object>(() =>
+                {
+                    CheckFile(ConstantsPR.PATH_COMMON);
+                    return null;
+                });
         }
 
         [TestMethod]
         public void B_User_Access_Check()
         {
-            using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword))
-            {
-                long ln = CheckFile(ConstantsPR.PATH_COMMON);
-                Assert.AreEqual(9, ln, "B user have access to a common directory.");
-                ln = CheckFile(ConstantsPR.PATH_ARCHIVE);
-                Assert.AreEqual(6, ln, "B user have access to Archive directory.");
-            }
+            Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword);
+            long ln = archive.WrapAction<long>(() => {
+                return CheckFile(ConstantsPR.PATH_COMMON);
+            });
+            Assert.AreEqual(9, ln, "B user should have access to a common directory.");
+
+            ln = archive.WrapAction<long>(() => {
+                return CheckFile(ConstantsPR.PATH_ARCHIVE);
+            });
+            Assert.AreEqual(6, ln, "B user should have access to Archive directory.");            
         }
 
         [TestMethod]
@@ -34,14 +39,14 @@ namespace ArchiveLib.Tests
         {
             // current user have no access to archive
             long ln = CheckFile(ConstantsPR.PATH_ARCHIVE);
-            Assert.AreEqual(9, ln, "Current user have NO access to Archive directory.");
+            Assert.AreEqual(9, ln, "Current user should have NO access to Archive directory.");
         }
 
         [TestMethod]
         public void Current_User_Acces_To_Common()
         {
             long ln = CheckFile(ConstantsPR.PATH_COMMON);
-            Assert.AreEqual(9, ln, "Current user have access to a common directory.");
+            Assert.AreEqual(9, ln, "Current user should have access to a common directory.");
         }
 
 
