@@ -19,10 +19,12 @@ namespace ArchiveLib
 
         void DeleteInArchive(string destinationFilePath, bool exceptionIfNotFound = false);
 
+        void CopyWithingArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true, bool deleteSource = false);
+
+        void InsureArchiveDirectory(string destinationDirectory);
+
         //void CopyToArchiveBt();
         //void CopyFromArchiveBt();
-        //void CopyWithingArchive();
-        //void DeleteInArchive();
         //void InsureArchiveDirectory();
 
     }

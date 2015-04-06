@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Principal;
 
 namespace ArchiveLib
@@ -20,11 +22,6 @@ namespace ArchiveLib
             _domain = domain;
             _account = account;
             _password = password;
-
- 
-
-            //_newId = new WindowsIdentity(_safeTokenHandle.DangerousGetHandle());
-            //_impersonatedUser = _newId.Impersonate();
         }
 
         #region IArchive
@@ -166,15 +163,29 @@ namespace ArchiveLib
                 return fileBuffer;
             });
 
-
             FileStream destinationFs = new FileStream(destinationFilePath, FileMode.Create);
             destinationFs.Write(buffer, 0, buffer.Length);
             destinationFs.Close();
         }
 
+        public void CopyWithingArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true, bool deleteSource = false)
+        {
+            WrapAction<object>(() =>
+            {
+                File.Copy(sourceFilePath, destinationFilePath, allowOverwrite);
+
+                if (deleteSource)
+                {
+                    File.Delete(sourceFilePath);
+                }
+                return null;
+            });
+        }
+
         public void DeleteInArchive(string destinationFilePath, bool exceptionIfNotFound = false)
         {
-            WrapAction<object>(() => {
+            WrapAction<object>(() =>
+            {
                 FileInfo info = new FileInfo(destinationFilePath);
                 if (!info.Exists && exceptionIfNotFound)
                 {
@@ -189,40 +200,73 @@ namespace ArchiveLib
             });
         }
 
-        #endregion IArchive
-
-        public bool InsureDirectory(string path)
+        public void InsureArchiveDirectory(string destinationDirectory)
         {
-            // check and create directory in the secure area
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
-            if (directoryInfo.Exists)
-                return true;
-
-            IntPtr token = (IntPtr)0;
-            bool loggedOn = false;// NativeMethods.LogonUser(_accountName, _accountDomain, _accountPassword, LogonTypes.Interactive, LogonProviders.Default, out token);
-
-            if (!loggedOn)
-                return false;
-
-            WindowsIdentity identity = new WindowsIdentity(token);
-            WindowsImpersonationContext context = identity.Impersonate();
-            bool requireUndo = true;
-            try
+            WrapAction<object>(() =>
             {
-                directoryInfo.Create();
-                return true;
-            }
-            catch
+                DirectoryInfo info = new DirectoryInfo(destinationDirectory);
+                if (!info.Exists)
+                {
+                    info.Create();
+                }
+                return null;
+            });
+        }
+
+        public void CopyToArchiveLarge(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true)
+        {
+            byte[] buffer = null;
+
+
+            long blockSize = 10000000;
+            long ln = (new FileInfo(sourceFilePath)).Length;
+
+            using (var mmf = MemoryMappedFile.CreateFromFile(sourceFilePath, FileMode.Open, "Temp"))
             {
-                context.Undo();
-                requireUndo = false;
-                throw;
-            }
-            finally
-            {
-                if (requireUndo)
-                    context.Undo();
+                WrapAction<object>(() =>
+                {
+                    if (allowOverwrite == false)
+                    {
+                        if (File.Exists(destinationFilePath))
+                        {
+                            throw new ApplicationException("File already exists.");
+                        }
+                    }
+
+                    FileStream destinationFs = new FileStream(destinationFilePath, FileMode.Create);
+
+                    long offset =0;
+                    long length = 0;
+                    long i = 0;
+                    do// for (int i = 0; i < ln; i++)
+                    {
+                        offset = i * blockSize;
+                        length = blockSize;
+                        if (offset + length > ln)
+                        {
+                            length = ln - offset;
+                        }
+
+                        using (var reader = mmf.CreateViewAccessor(offset, length, MemoryMappedFileAccess.Read))
+                        {
+                            System.Diagnostics.Debug.WriteLine("iteration  i=" + i + " offset=" + offset + " length=" + length);
+
+                            buffer = new byte[length];
+                            reader.ReadArray<byte>(0, buffer, 0, (int) length);
+
+                            destinationFs.Write(buffer, 0, buffer.Length);
+                            destinationFs.Flush(true);
+                        }
+                        i++;
+                    } while (offset + length < ln);
+
+                    destinationFs.Close();
+
+                    return null;
+                });
             }
         }
+
+        #endregion IArchive
     }
 }
