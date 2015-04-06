@@ -2,6 +2,9 @@
 {
     public static class ConstantsPR
     {
+        public const string PATH_BONLY = @"..\..\BOnly";
+        public const string PATH_AONLY = @"..\..\AOnly";
+
         public static string UserDomain { get; private set; }
 
         public static string UserName { get; private set; }

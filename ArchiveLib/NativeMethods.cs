@@ -37,18 +37,3 @@ namespace ArchiveLib
         public static extern bool CloseHandle(IntPtr handle);
     }
 }
-
-//[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-//public extern static bool CloseHandle(IntPtr handle);
-
-//[DllImport("advapi32.dll", SetLastError = true)]
-//public static extern bool LogonUser(
-//  string principal,
-//  string authority,
-//  string password,
-//  LogonTypes logonType,
-//  LogonProviders logonProvider,
-//  out IntPtr token);
-
-//[DllImport("kernel32.dll", SetLastError = true)]
-//public static extern bool CloseHandle(IntPtr handle);

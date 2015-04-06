@@ -6,26 +6,22 @@ namespace ArchiveLib.Tests
     [TestClass]
     public class T01_GeneralAccess
     {
-        private string _b_path = @"..\..\BOnly";
-        private string _a_path = @"..\..\AOnly";
-
-
         [TestMethod]
         [ExpectedException(typeof(System.ApplicationException))]
         public void Invalid_Credentials()
         {
             using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, "XXXXX"))
             {
-                archive.WrapAction(() => Act(_a_path));
+                archive.WrapAction(() => Act(ConstantsPR.PATH_AONLY));
             }
         }
 
         [TestMethod]
         public void User_Access_To_A()
         {
-            using (Archive archive = new Archive(ConstantsPR.UserDomain,  ConstantsPR.UserName, ConstantsPR.UserPassword))
+            using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword))
             {
-                archive.WrapAction(() => Act(_a_path));
+                archive.WrapAction(() => Act(ConstantsPR.PATH_AONLY));
             }
         }
 
@@ -35,20 +31,20 @@ namespace ArchiveLib.Tests
         {
             using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword))
             {
-                archive.WrapAction(() => Act(_b_path));
+                archive.WrapAction(() => Act(ConstantsPR.PATH_BONLY));
             }
         }
 
         [TestMethod]
         public void Default_Access_To_A()
         {
-            Act(_b_path);
+            Act(ConstantsPR.PATH_AONLY);
         }
 
         [TestMethod]
         public void Default_Access_To_B()
         {
-            Act(_b_path);
+            Act(ConstantsPR.PATH_BONLY);
         }
 
         private object Act(string path)

@@ -1,32 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArchiveLib
 {
-    public class Archive : IDisposable
+    public class Archive : IDisposable, IArchive
     {
-        SafeTokenHandle _safeTokenHandle;
+        private SafeTokenHandle _safeTokenHandle;
 
-        public Archive(string accountDomain, string accountName,  string accountPassword)
+        public Archive(string accountDomain, string accountName, string accountPassword)
         {
-  
             bool loggedOn = NativeMethods.LogonUser(accountName, accountDomain, accountPassword, NativeMethods.LogonTypes.Interactive, NativeMethods.LogonProviders.Default, out _safeTokenHandle);
             if (loggedOn == false)
             {
                 int errorCode = Marshal.GetLastWin32Error();
-                string message = "Invalid credentials. Error code '" + errorCode + "'.";                
+                string message = "Invalid credentials. Error code '" + errorCode + "'.";
                 throw new ApplicationException(message);
             }
- 
         }
 
-        public object WrapAction(Func<object> action)
+        #region IArchive
+
+        public T WrapAction<T>(Func<T> action)
         {
             using (_safeTokenHandle)
             {
@@ -34,12 +30,23 @@ namespace ArchiveLib
                 {
                     using (WindowsImpersonationContext impersonatedUser = newId.Impersonate())
                     {
-                        return action();
                         //System.Diagnostics.Debug.WriteLine("After impersonation: " + WindowsIdentity.GetCurrent().Name);
+                        return action();                        
                     }
                 }
             }
         }
+
+        public FileInfo GetFileInfo(string archiveFilePath)
+        {
+            FileInfo info = WrapAction<FileInfo>(() => {
+                FileInfo newInfo = new FileInfo(archiveFilePath);
+                return newInfo; });
+
+            return info;
+        }
+
+        #endregion IArchive
 
         public bool InsureDirectory(string path)
         {
@@ -48,7 +55,7 @@ namespace ArchiveLib
             if (directoryInfo.Exists)
                 return true;
 
-            IntPtr token = (IntPtr) 0;
+            IntPtr token = (IntPtr)0;
             bool loggedOn = false;// NativeMethods.LogonUser(_accountName, _accountDomain, _accountPassword, LogonTypes.Interactive, LogonProviders.Default, out token);
 
             if (!loggedOn)
@@ -79,5 +86,7 @@ namespace ArchiveLib
         {
             //throw new NotImplementedException();
         }
+
+
     }
 }
