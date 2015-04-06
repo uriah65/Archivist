@@ -8,42 +8,73 @@ namespace ArchiveLib
     public class Archive : IDisposable, IArchive
     {
         private SafeTokenHandle _safeTokenHandle;
+        private WindowsIdentity _newId;
+        private WindowsImpersonationContext _impersonatedUser;
 
         public Archive(string accountDomain, string accountName, string accountPassword)
         {
-            bool loggedOn = NativeMethods.LogonUser(accountName, accountDomain, accountPassword, NativeMethods.LogonTypes.Interactive, NativeMethods.LogonProviders.Default, out _safeTokenHandle);
-            if (loggedOn == false)
+            bool success = NativeMethods.LogonUser(accountName, accountDomain, accountPassword, NativeMethods.LogonTypes.Interactive, NativeMethods.LogonProviders.Default, out _safeTokenHandle);
+            if (!success)
             {
                 int errorCode = Marshal.GetLastWin32Error();
                 string message = "Invalid credentials. Error code '" + errorCode + "'.";
                 throw new ApplicationException(message);
             }
+
+            _newId = new WindowsIdentity(_safeTokenHandle.DangerousGetHandle());
+            _impersonatedUser = _newId.Impersonate();
         }
 
         #region IArchive
 
         public T WrapAction<T>(Func<T> action)
         {
-            using (_safeTokenHandle)
+            return action();
+            //using (_safeTokenHandle)
+            //{
+            //    using (WindowsIdentity newId = new WindowsIdentity(_safeTokenHandle.DangerousGetHandle()))
+            //    {
+            //        using (WindowsImpersonationContext impersonatedUser = newId.Impersonate())
+            //        {
+            //            //System.Diagnostics.Debug.WriteLine("Middle of the Wrap Action: " + WindowsIdentity.GetCurrent().Name);
+            //            return action();
+            //        }
+            //    }
+            //}
+        }
+
+        public void Dispose()
+        {
+            if (_impersonatedUser != null)
             {
-                using (WindowsIdentity newId = new WindowsIdentity(_safeTokenHandle.DangerousGetHandle()))
-                {
-                    using (WindowsImpersonationContext impersonatedUser = newId.Impersonate())
-                    {
-                        //System.Diagnostics.Debug.WriteLine("After impersonation: " + WindowsIdentity.GetCurrent().Name);
-                        return action();                        
-                    }
-                }
+                _impersonatedUser.Dispose();
+            }
+
+            if (_newId != null)
+            {
+                _newId.Dispose();
+            }
+
+            if (_safeTokenHandle != null)
+            {
+                _safeTokenHandle.Dispose();
             }
         }
 
         public FileInfo GetFileInfo(string archiveFilePath)
         {
-            FileInfo info = WrapAction<FileInfo>(() => {
-                FileInfo newInfo = new FileInfo(archiveFilePath);
-                return newInfo; });
-
+            FileInfo info = new FileInfo(archiveFilePath);
+            long ln = info.Length; /* we had to get length while in secure */
             return info;
+
+            //FileInfo info = WrapAction<FileInfo>(() =>
+            //{
+            //    FileInfo newInfo = new FileInfo(archiveFilePath);
+            //    long ln = newInfo.Length; /* we had to get length while in secure */
+            //    return newInfo;
+            //});
+
+            //return info;
         }
 
         #endregion IArchive
@@ -81,12 +112,5 @@ namespace ArchiveLib
                     context.Undo();
             }
         }
-
-        public void Dispose()
-        {
-            //throw new NotImplementedException();
-        }
-
-
     }
 }

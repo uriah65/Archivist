@@ -12,42 +12,40 @@ namespace ArchiveLib.Tests
         {
             using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, "XXXXX"))
             {
-                archive.WrapAction(() => Act(ConstantsPR.PATH_COMMON));
+                CheckFile(ConstantsPR.PATH_COMMON);
             }
         }
 
         [TestMethod]
-        public void User_Access_To_Common()
+        public void B_User_Access_Check()
         {
             using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword))
             {
-                archive.WrapAction(() => Act(ConstantsPR.PATH_COMMON));
+                long ln = CheckFile(ConstantsPR.PATH_COMMON);
+                Assert.AreEqual(9, ln, "B user have access to a common directory.");
+                ln = CheckFile(ConstantsPR.PATH_ARCHIVE);
+                Assert.AreEqual(6, ln, "B user have access to Archive directory.");
             }
         }
 
         [TestMethod]
         [ExpectedException(typeof(System.UnauthorizedAccessException))]
-        public void User_Access_To_Archive()
+        public void Current_User_Access_To_Archive()
         {
-            using (Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword))
-            {
-                archive.WrapAction(() => Act(ConstantsPR.PATH_ARCHIVE));
-            }
+            // current user have no access to archive
+            long ln = CheckFile(ConstantsPR.PATH_ARCHIVE);
+            Assert.AreEqual(9, ln, "Current user have NO access to Archive directory.");
         }
 
         [TestMethod]
-        public void Default_Access_To_A()
+        public void Current_User_Acces_To_Common()
         {
-            Act(ConstantsPR.PATH_COMMON);
+            long ln = CheckFile(ConstantsPR.PATH_COMMON);
+            Assert.AreEqual(9, ln, "Current user have access to a common directory.");
         }
 
-        [TestMethod]
-        public void Default_Access_To_B()
-        {
-            Act(ConstantsPR.PATH_ARCHIVE);
-        }
 
-        private object Act(string path)
+        private long CheckFile(string path)
         {
             path = path + @"\t.txt";
             FileInfo info = new FileInfo(path);
