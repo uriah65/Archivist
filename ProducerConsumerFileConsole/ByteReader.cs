@@ -10,13 +10,13 @@ namespace ProducerConsumerFileConsole
     public class ByteReader
     {
         private ByteBox _cell;         // Field to hold cell object to be used
-        private int _quantity;      // Field for how many items to produce in cell
+        private int _boxSize;      // Field for how many items to produce in cell
         private string _sourceFilePath;
 
-        public ByteReader(ByteBox cell, int quantity, string sourceFilePath)
+        public ByteReader(ByteBox cell, int boxSize, string sourceFilePath)
         {
             _cell = cell;          // Pass in what cell object to be used
-            _quantity = quantity;  // Pass in how many items to produce in cell
+            _boxSize = boxSize;  // Pass in how many items to produce in cell
             _sourceFilePath = sourceFilePath;
         }
 
@@ -29,13 +29,15 @@ namespace ProducerConsumerFileConsole
             //    _cell.WriteToCell(i);  // "producing"
             //}
 
+            byte[] bytes = new byte[_boxSize];
+
             using (FileStream fileStream = new FileStream(@"C:\temp\tree.png", FileMode.Open, FileAccess.Read))
             {
                 do
                 {
-                    int readed = fileStream.Read(_cell._bytes, 0, _cell._bytes.Length);
-                    _cell.WriteToCell(readed);
-                    if (readed == 0)
+                    int realSize = fileStream.Read(bytes, 0, _boxSize);
+                    _cell.WriteToCell(bytes, realSize);
+                    if (realSize == 0)
                     {
                         break;
                     }

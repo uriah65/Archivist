@@ -10,13 +10,11 @@ namespace ProducerConsumerFileConsole
 {
     public class ByteBox
     {
-        public int BoxSize { get; private set; }
+        public int _boxSize; 
 
         public byte[] _bytes;
         public int _bytesInThebox;
 
-        public byte[] _bytesToRead;
-        public int _bytesInTheboxToRead;
 
         private int cellContents;         // Cell contents
         private bool readerFlag;  // State flag
@@ -24,17 +22,18 @@ namespace ProducerConsumerFileConsole
 
         public ByteBox(int boxSize, int repeatLimit)
         {
-            BoxSize = boxSize;
+            _boxSize = boxSize;
             _bytes = new byte[boxSize];
-            _bytesToRead = new byte[boxSize];
             _repeatLimit = repeatLimit;
         }
 
-        public int ReadFromCell()
+        public byte[] ReadFromCell()
         {
+            byte[] result = null;
+
             lock (this)   // Enter synchronization block
             {
-                if (!readerFlag)
+                if (readerFlag == false)
                 {            // Wait until Cell.WriteToCell is done producing
                     try
                     {
@@ -50,16 +49,25 @@ namespace ProducerConsumerFileConsole
                         Console.WriteLine(e);
                     }
                 }
+
+                //result = 
+                result = new byte[_bytesInThebox];
+                for (int i = 0; i < _bytesInThebox; i++)
+                {
+                    result[i] = _bytes[i];
+                }
+
                 Console.WriteLine("Consume: {0}", cellContents);
                 readerFlag = false;    // Reset the state flag to say consuming
                                        // is done.
                 Monitor.Pulse(this);   // Pulse tells Cell.WriteToCell that
                                        // Cell.ReadFromCell is done.
             }   // Exit synchronization block
-            return _bytesInTheboxToRead;
+
+            return result;
         }
 
-        public void WriteToCell(int n)
+        public void WriteToCell(byte[] bytes, int realSize)
         {
             lock (this)  // Enter synchronization block
             {
@@ -79,10 +87,24 @@ namespace ProducerConsumerFileConsole
                         Console.WriteLine(e);
                     }
                 }
-                cellContents = n;
 
-                _bytesToRead = _bytes.ToArray();
-                _bytesInTheboxToRead = n;
+
+                //_bytes = bytes.ToArray();
+                //if (_bytes == bytes)
+                //{
+                //}
+                //else
+                //{
+                //}
+
+                cellContents = realSize;
+                _bytesInThebox = realSize;
+                _bytes = bytes.ToArray();
+                //for (int i = 0; i < bytes.Length; i++)
+                //{
+                //    _bytes[i] = bytes[i];
+                //}
+
                 Console.WriteLine("Produce: {0} by {1}", cellContents, WindowsIdentity.GetCurrent().Name);
                 readerFlag = true;    // Reset the state flag to say producing
                                       // is done

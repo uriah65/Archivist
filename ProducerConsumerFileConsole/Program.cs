@@ -29,10 +29,12 @@ namespace ProducerConsumerFileConsole
             login.Account = lines[1];
             login.Password = lines[2];
 
-            int result = 0;   // Result initialized to say there is no error
-            ByteBox byteBox = new ByteBox(100, 1000);
+            int boxSize = 100;
 
-            ByteReader reader = new ByteReader(byteBox, 20, sourceFilePath);  // Use cell for storage,
+            int result = 0;   // Result initialized to say there is no error
+            ByteBox byteBox = new ByteBox(boxSize, 1000);
+
+            ByteReader reader = new ByteReader(byteBox, boxSize, sourceFilePath);  // Use cell for storage,
                                                                               // produce 20 items
             ByteWriter writer = new ByteWriter(byteBox, 20, destinationFilePath, login);  // Use cell for storage,
                                                                                           // consume 20 items

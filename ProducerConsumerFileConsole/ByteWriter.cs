@@ -33,12 +33,12 @@ namespace ProducerConsumerFileConsole
                 do
                 {
                         // Consume the result by placing it in valReturned.
-                    int valReturned = _cell.ReadFromCell();
-                    if (valReturned == 0)
+                    byte[] result = _cell.ReadFromCell();
+                    if (result.Length == 0)
                     {
                         break;
                     }
-                    fsNew.Write(_cell._bytesToRead, 0, valReturned);
+                    fsNew.Write(result, 0, result.Length);
                 } while (true);
             }
 
