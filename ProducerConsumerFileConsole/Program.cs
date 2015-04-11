@@ -18,8 +18,8 @@ namespace ProducerConsumerFileConsole
             //Copy_To_Archive_Large_TestBuffer();
             //return;
 
-            string sourceFilePath = @"C:\temp\tree.png";
-            string destinationFilePath = @"C:\temp\treeNew.png";
+            string sourceFilePath = @"C:\temp\autumn.jpg";
+            string destinationFilePath = @"C:\temp\autumnNew.jpg";
 
             string path = @"C:\temp\credentials.txt";
             string[] lines = System.IO.File.ReadAllLines(path);
@@ -29,7 +29,7 @@ namespace ProducerConsumerFileConsole
             login.Account = lines[1];
             login.Password = lines[2];
 
-            int boxSize = 100;
+            int boxSize = 10;
 
             int result = 0;   // Result initialized to say there is no error
             ByteBox byteBox = new ByteBox(boxSize, 1000);

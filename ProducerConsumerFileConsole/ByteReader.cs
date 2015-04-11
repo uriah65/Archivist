@@ -31,7 +31,7 @@ namespace ProducerConsumerFileConsole
 
             byte[] bytes = new byte[_boxSize];
 
-            using (FileStream fileStream = new FileStream(@"C:\temp\tree.png", FileMode.Open, FileAccess.Read))
+            using (FileStream fileStream = new FileStream(_sourceFilePath, FileMode.Open, FileAccess.Read))
             {
                 do
                 {
