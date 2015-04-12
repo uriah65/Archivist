@@ -13,14 +13,21 @@ namespace ProducerConsumerFileConsole
         public byte[] _bytes;
         public int _bytesInThebox;
 
+        public string AbortMessage { get; private set; }
+
         public ByteBox()
         {
         }
 
-        public void DepositBytes(byte[] bytes, int realSize)
+        public void DepositBytes(byte[] bytes, int realSize, string abortMessage)
         {
             lock (this)
             {
+                if (abortMessage != null)
+                {
+                    AbortMessage = abortMessage;
+                }
+
                 if (readerFlag)
                 {
                     try
@@ -37,22 +44,30 @@ namespace ProducerConsumerFileConsole
                     }
                 }
 
-                _bytesInThebox = realSize;
-                _bytes = bytes.ToArray();
+                if (abortMessage == null)
+                {
+                    _bytesInThebox = realSize;
+                    _bytes = bytes.ToArray();
 
-                Debug.WriteLine("Produce: {0} by {1}", _bytes.Length, WindowsIdentity.GetCurrent().Name);
+                    Debug.WriteLine("Produce: {0} by {1}", _bytes.Length, WindowsIdentity.GetCurrent().Name);
+                }
 
                 readerFlag = true;
                 Monitor.Pulse(this);
             }   // Exit synchronization block
         }
 
-        public byte[] WithdrawBytes()
+        public byte[] WithdrawBytes(string abortMessage)
         {
             byte[] result = null;
 
             lock (this)
             {
+                if (abortMessage != null)
+                {
+                    AbortMessage = abortMessage;
+                }
+
                 if (readerFlag == false)
                 {
                     try

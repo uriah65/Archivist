@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace ProducerConsumerFileConsole
 {
@@ -17,17 +18,41 @@ namespace ProducerConsumerFileConsole
 
         public void ThreadRun()
         {
-            byte[] bytes = new byte[_boxSize];
-
-            using (FileStream fileStream = new FileStream(_sourceFilePath, FileMode.Open, FileAccess.Read))
+            FileStream fileStream = null;
+            try
             {
+                byte[] bytes = new byte[_boxSize];
+
+                int _exceptionCount = -2;
+
+                fileStream = new FileStream(_sourceFilePath, FileMode.Open, FileAccess.Read);
+
                 int readCount = 0;
                 do
                 {
+                    if (_box.AbortMessage != null)
+                    {
+                        break;
+                    }
+
+                    if (--_exceptionCount == 0) throw new ApplicationException("Test exception in reader");
+
                     // read portion of the bytes from the source file and deposit it in the box.
                     readCount = fileStream.Read(bytes, 0, _boxSize);
-                    _box.DepositBytes(bytes, readCount);
+                    _box.DepositBytes(bytes, readCount, null);
+
                 } while (readCount > 0);
+            }
+            catch (Exception ex)
+            {
+                _box.DepositBytes(null, 0, ex.Message);
+            }
+            finally
+            {
+                if (fileStream != null)
+                {
+                    fileStream.Dispose();
+                }
             }
         }
     }

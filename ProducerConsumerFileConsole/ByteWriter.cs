@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace ProducerConsumerFileConsole
 {
@@ -17,21 +18,37 @@ namespace ProducerConsumerFileConsole
 
         public void ThreadRun()
         {
-            _login.Impersonate();
-
-            using (FileStream fsNew = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write))
+            int exceptionCount = -2;
+            try
             {
-                int readCount = 0;
-                do
-                {
-                    // Withdraw bytes bytes and append them to the destination file.
-                    byte[] bytes = _box.WithdrawBytes();
-                    readCount = bytes.Length;
-                    fsNew.Write(bytes, 0, bytes.Length);
-                } while (readCount > 0);
-            }
+                _login.Impersonate();
 
-            _login.Dispose();
+                using (FileStream fsNew = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write))
+                {
+                    int readCount = 0;
+                    do
+                    {
+                        if (--exceptionCount == 0) throw new ApplicationException("Test exception in Writer");
+                        if (_box.AbortMessage != null)
+                        {
+                            break;
+                        }
+
+                        // Withdraw bytes bytes and append them to the destination file.
+                        byte[] bytes = _box.WithdrawBytes(null);
+                        readCount = bytes.Length;
+                        fsNew.Write(bytes, 0, bytes.Length);
+                    } while (readCount > 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                _box.WithdrawBytes(ex.Message);
+            }
+            finally
+            {
+                _login.Dispose();
+            }
         }
     }
 }

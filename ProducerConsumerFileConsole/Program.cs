@@ -27,7 +27,7 @@ namespace ProducerConsumerFileConsole
             login.Account = lines[1];
             login.Password = lines[2];
 
-            int boxSize = 100;// (int) Math.Pow(2, 20); //1000000; // 1MB
+            int boxSize = (int) Math.Pow(2, 20); //1000000; // 1MB
 
 
             ByteBox byteBox = new ByteBox();
@@ -59,7 +59,12 @@ namespace ProducerConsumerFileConsole
                                        // was interrupted during a Wait
                 result = 1;            // Result says there was an error
             }
+            catch (Exception ex)
+            {
+            }
 
+
+            Console.WriteLine("Finished: " + byteBox.AbortMessage);
             Console.ReadKey();
 
             // Even though Main returns void, this provides a return code to
