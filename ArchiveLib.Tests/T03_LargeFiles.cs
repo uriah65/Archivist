@@ -7,10 +7,15 @@ namespace ArchiveLib.Tests
     [TestClass]
     public class T03_LargeFiles
     {
-        private const string largefileName = "large.iso";
-        private const string sourceFilePath = @"C:\temp\" + largefileName;
+        //private const string largefileName = "large.iso";
+        //private const string sourceFilePath = @"C:\temp\" + largefileName;
 
-        private const string archiveFilePath = ConstantsPR.PATH_ARCHIVE + @"\" + largefileName;
+        //private const string largefileName = "autumn.jpg";
+        private const string sourceFilePath = @"C:\temp\autumn.jpg";
+
+
+        //private const string archiveFilePath = ConstantsPR.PATH_ARCHIVE + @"\" + largefileName;
+        private const string archiveFilePath = @"C:\temp\autumnNew.jpg";
 
         [TestMethod]
         public void Copy_To_Archive_Large()

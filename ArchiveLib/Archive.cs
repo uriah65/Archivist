@@ -284,13 +284,13 @@ namespace ArchiveLib
             BytesBox byteBox = new BytesBox();
 
             FileReader reader = new FileReader(byteBox, boxSize, sourceFilePath, null);
-            FileWriter writer = new FileWriter(byteBox, destinationFilePath, login);
+            FileWriter writer = new FileWriter(byteBox, boxSize, destinationFilePath, login);
 
             Thread readerThread = new Thread(new ThreadStart(reader.ThreadRun));
             Thread writerThread = new Thread(new ThreadStart(writer.ThreadRun));
 
-            try
-            {
+            //try
+            //{
                 readerThread.Start();
                 writerThread.Start();
 
@@ -298,22 +298,22 @@ namespace ArchiveLib
                                        // Run both until done.
                 writerThread.Join();
                 // threads producer and consumer have finished at this point.
+                //}
+                //catch (ThreadStateException e)
+                //{
+                //    Console.WriteLine(e);  // Display text of exception
+                //    result = 1;            // Result says there was an error
+                //}
+                //catch (ThreadInterruptedException e)
+                //{
+                //    Console.WriteLine(e);  // This exception means that the thread
+                //                           // was interrupted during a Wait
+                //    result = 1;            // Result says there was an error
+                //}
+                //catch (Exception ex)
+                //{
+                //}
             //}
-            //catch (ThreadStateException e)
-            //{
-            //    Console.WriteLine(e);  // Display text of exception
-            //    result = 1;            // Result says there was an error
-            //}
-            //catch (ThreadInterruptedException e)
-            //{
-            //    Console.WriteLine(e);  // This exception means that the thread
-            //                           // was interrupted during a Wait
-            //    result = 1;            // Result says there was an error
-            //}
-            //catch (Exception ex)
-            //{
-            //}
-
         }
 
 

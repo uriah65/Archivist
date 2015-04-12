@@ -23,16 +23,16 @@ namespace ArchiveLib.Console
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            //long filelength = (new FileInfo(sourceFilePath)).Length;
-
-            //Archive archive = new Archive(userDomain, userName, userPassword);
-            //archive.CopyToArchiveThreads(sourceFilePath, destinationFilePath);
-
-            //System.Console.WriteLine("Done 1: " + sw.ElapsedMilliseconds / 1000.0);
-            //System.Console.ReadKey();
-
+           
 
             Archive archive = new Archive(userDomain, userName, userPassword);
+            archive.CopyToArchiveThreads(sourceFilePath, destinationFilePath);
+
+            System.Console.WriteLine("Done 1: " + sw.ElapsedMilliseconds / 1000.0);
+            System.Console.ReadKey();
+
+
+            archive = new Archive(userDomain, userName, userPassword);
             archive.CopyToArchiveLarge(sourceFilePath, destinationFilePath);
 
             System.Console.WriteLine("Done 2: " + sw.ElapsedMilliseconds / 1000.0);

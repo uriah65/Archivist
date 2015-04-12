@@ -6,12 +6,14 @@ namespace ArchiveLib.ReaderWriter
     public class FileWriter
     {
         private BytesBox _box;
+        private int _boxSize;
         private string _destinationFilePath;
         private Login _login;
 
-        public FileWriter(BytesBox box, string destinationFilePath, Login login)
+        public FileWriter(BytesBox box, int boxSize, string destinationFilePath, Login login)
         {
             _box = box;
+            _boxSize = boxSize;
             _destinationFilePath = destinationFilePath;
             _login = login;
         }
@@ -19,9 +21,11 @@ namespace ArchiveLib.ReaderWriter
         public void ThreadRun()
         {
             //int exceptionCount = 2;
+            byte[] bytes = new byte[_boxSize];
             FileStream fsNew = null;
             try
             {
+               
                 if (_login != null)
                 {
                     // we impersonate if _login object is provided.
@@ -40,14 +44,16 @@ namespace ArchiveLib.ReaderWriter
                     }
 
                     // Withdraw bytes bytes and append them to the destination file.
-                    byte[] bytes = _box.WithdrawBytes(null);
-                    readCount = bytes.Length;
+                    //byte[] bytes = _box.WithdrawBytes(null);
+                    //readCount = bytes.Length;
+                    readCount = _box.WithdrawBytes(ref bytes, null);
                     fsNew.Write(bytes, 0, bytes.Length);
+                    //fsNew.Flush();
                 } while (readCount > 0);
             }
             catch (Exception ex)
             {
-                _box.WithdrawBytes("Exception writing file: " + ex.Message);
+                _box.WithdrawBytes(ref bytes, "Exception writing file: " + ex.Message);
             }
             finally
             {

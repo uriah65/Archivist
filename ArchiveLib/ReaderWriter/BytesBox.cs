@@ -55,9 +55,9 @@ namespace ArchiveLib.ReaderWriter
             }   // Exit synchronization block
         }
 
-        public byte[] WithdrawBytes(string abortMessage)
+        public int WithdrawBytes(ref byte[] bytes, string abortMessage)
         {
-            byte[] result = null;
+            //byte[] result = null;
 
             lock (this)
             {
@@ -82,19 +82,19 @@ namespace ArchiveLib.ReaderWriter
                     }
                 }
 
-                result = new byte[_bytesInThebox];
+                //result = new byte[_bytesInThebox];
                 for (int i = 0; i < _bytesInThebox; i++)
                 {
-                    result[i] = _bytes[i];
+                    bytes[i] = _bytes[i];
                 }
 
-                Debug.WriteLine("Consume: {0}", result.Length);
+                Debug.WriteLine("Consume: {0}", _bytesInThebox);
                 readerFlag = false;
 
                 Monitor.Pulse(this);
             }   // Exit synchronization block
 
-            return result;
+            return _bytesInThebox;
         }
     }
 }
