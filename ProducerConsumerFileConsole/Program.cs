@@ -72,30 +72,6 @@ namespace ProducerConsumerFileConsole
             Environment.ExitCode = result;
         }
 
-
-        //public static void Copy_To_Archive_Large_TestBuffer()
-        //{
-        //    int BUFFER_SIZE = 100;
-        //    byte[] bytes = new byte[BUFFER_SIZE];
-
-
-        //    int readed = 0;
-        //    using (
-        //        FileStream fileStream = new FileStream(@"C:\temp\tree.png", FileMode.Open, FileAccess.Read),
-        //        fsNew = new FileStream(@"C:\temp\treeNew.png", FileMode.Create, FileAccess.Write))
-        //    {
-        //        do
-        //        {
-        //            long position = fileStream.Position;
-        //            readed = fileStream.Read(bytes, 0, BUFFER_SIZE);
-        //            if (readed == 0)
-        //            {
-        //                break;
-        //            }
-        //            fsNew.Write(bytes, 0, readed);
-        //        } while (readed > 0);
-        //    }
-        //}
     }
 
     public class Login : IDisposable

@@ -8,16 +8,12 @@ namespace ProducerConsumerFileConsole
 {
     public class ByteBox
     {
-        private bool readerFlag;  // State flag
+        private bool readerFlag;  // state flag
+        public string AbortMessage { get; private set; } // exception message
 
-        public byte[] _bytes;
-        public int _bytesInThebox;
-
-        public string AbortMessage { get; private set; }
-
-        public ByteBox()
-        {
-        }
+        // data
+        private byte[] _bytes;
+        private int _bytesInThebox;
 
         public void DepositBytes(byte[] bytes, int realSize, string abortMessage)
         {
