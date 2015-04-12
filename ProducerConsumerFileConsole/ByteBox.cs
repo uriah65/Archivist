@@ -1,43 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ProducerConsumerFileConsole
 {
     public class ByteBox
     {
-        public int _boxSize; 
+        private bool readerFlag;  // State flag
 
         public byte[] _bytes;
         public int _bytesInThebox;
 
-
-        private int cellContents;         // Cell contents
-        private bool readerFlag;  // State flag
-        private int _repeatLimit;
-
-        public ByteBox(int boxSize, int repeatLimit)
+        public ByteBox()
         {
-            _boxSize = boxSize;
-            _bytes = new byte[boxSize];
-            _repeatLimit = repeatLimit;
         }
 
-        public byte[] ReadFromCell()
+        public void DepositBytes(byte[] bytes, int realSize)
         {
-            byte[] result = null;
-
-            lock (this)   // Enter synchronization block
+            lock (this)
             {
-                if (readerFlag == false)
-                {            // Wait until Cell.WriteToCell is done producing
+                if (readerFlag)
+                {
                     try
                     {
-                        // Waits for the Monitor.Pulse in WriteToCell
                         Monitor.Wait(this);
                     }
                     catch (SynchronizationLockException e)
@@ -50,33 +37,27 @@ namespace ProducerConsumerFileConsole
                     }
                 }
 
-                //result = 
-                result = new byte[_bytesInThebox];
-                for (int i = 0; i < _bytesInThebox; i++)
-                {
-                    result[i] = _bytes[i];
-                }
+                _bytesInThebox = realSize;
+                _bytes = bytes.ToArray();
 
-                Console.WriteLine("Consume: {0}", cellContents);
-                readerFlag = false;    // Reset the state flag to say consuming
-                                       // is done.
-                Monitor.Pulse(this);   // Pulse tells Cell.WriteToCell that
-                                       // Cell.ReadFromCell is done.
+                Debug.WriteLine("Produce: {0} by {1}", _bytes.Length, WindowsIdentity.GetCurrent().Name);
+
+                readerFlag = true;
+                Monitor.Pulse(this);
             }   // Exit synchronization block
-
-            return result;
         }
 
-        public void WriteToCell(byte[] bytes, int realSize)
+        public byte[] WithdrawBytes()
         {
-            lock (this)  // Enter synchronization block
+            byte[] result = null;
+
+            lock (this)
             {
-                if (readerFlag)
-                {      // Wait until Cell.ReadFromCell is done consuming.
+                if (readerFlag == false)
+                {
                     try
                     {
-                        Monitor.Wait(this);   // Wait for the Monitor.Pulse in
-                                              // ReadFromCell
+                        Monitor.Wait(this);
                     }
                     catch (SynchronizationLockException e)
                     {
@@ -88,29 +69,19 @@ namespace ProducerConsumerFileConsole
                     }
                 }
 
+                result = new byte[_bytesInThebox];
+                for (int i = 0; i < _bytesInThebox; i++)
+                {
+                    result[i] = _bytes[i];
+                }
 
-                //_bytes = bytes.ToArray();
-                //if (_bytes == bytes)
-                //{
-                //}
-                //else
-                //{
-                //}
+                Debug.WriteLine("Consume: {0}", result.Length);
+                readerFlag = false;
 
-                cellContents = realSize;
-                _bytesInThebox = realSize;
-                _bytes = bytes.ToArray();
-                //for (int i = 0; i < bytes.Length; i++)
-                //{
-                //    _bytes[i] = bytes[i];
-                //}
-
-                Console.WriteLine("Produce: {0} by {1}", cellContents, WindowsIdentity.GetCurrent().Name);
-                readerFlag = true;    // Reset the state flag to say producing
-                                      // is done
-                Monitor.Pulse(this);  // Pulse tells Cell.ReadFromCell that
-                                      // Cell.WriteToCell is done.
+                Monitor.Pulse(this);
             }   // Exit synchronization block
+
+            return result;
         }
     }
 }

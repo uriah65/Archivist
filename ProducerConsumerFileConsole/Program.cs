@@ -14,35 +14,29 @@ namespace ProducerConsumerFileConsole
     {
         public static void Main(String[] args)
         {
-
-            //Copy_To_Archive_Large_TestBuffer();
-            //return;
+            int result = 0;   // Result initialized to say there is no error
 
             string sourceFilePath = @"C:\temp\autumn.jpg";
             string destinationFilePath = @"C:\temp\autumnNew.jpg";
 
-            string path = @"C:\temp\credentials.txt";
-            string[] lines = System.IO.File.ReadAllLines(path);
+            string credentialsFilePath = @"C:\temp\credentials.txt";
+            string[] lines = System.IO.File.ReadAllLines(credentialsFilePath);
 
             Login login = new Login();
             login.Domain = lines[0];
             login.Account = lines[1];
             login.Password = lines[2];
 
-            int boxSize = 10;
+            int boxSize = 100;// (int) Math.Pow(2, 20); //1000000; // 1MB
 
-            int result = 0;   // Result initialized to say there is no error
-            ByteBox byteBox = new ByteBox(boxSize, 1000);
 
-            ByteReader reader = new ByteReader(byteBox, boxSize, sourceFilePath);  // Use cell for storage,
-                                                                              // produce 20 items
-            ByteWriter writer = new ByteWriter(byteBox, 20, destinationFilePath, login);  // Use cell for storage,
-                                                                                          // consume 20 items
+            ByteBox byteBox = new ByteBox();
+
+            FileReader reader = new FileReader(byteBox, boxSize, sourceFilePath);  
+            FileWriter writer = new FileWriter(byteBox, destinationFilePath, login);  
 
             Thread readerThread = new Thread(new ThreadStart(reader.ThreadRun));
             Thread writerThread = new Thread(new ThreadStart(writer.ThreadRun));
-            // Threads producer and consumer have been created,
-            // but not started at this point.
 
             try
             {
@@ -74,29 +68,29 @@ namespace ProducerConsumerFileConsole
         }
 
 
-        public static void Copy_To_Archive_Large_TestBuffer()
-        {
-            int BUFFER_SIZE = 100;
-            byte[] bytes = new byte[BUFFER_SIZE];
+        //public static void Copy_To_Archive_Large_TestBuffer()
+        //{
+        //    int BUFFER_SIZE = 100;
+        //    byte[] bytes = new byte[BUFFER_SIZE];
 
 
-            int readed = 0;
-            using (
-                FileStream fileStream = new FileStream(@"C:\temp\tree.png", FileMode.Open, FileAccess.Read),
-                fsNew = new FileStream(@"C:\temp\treeNew.png", FileMode.Create, FileAccess.Write))
-            {
-                do
-                {
-                    long position = fileStream.Position;
-                    readed = fileStream.Read(bytes, 0, BUFFER_SIZE);
-                    if (readed == 0)
-                    {
-                        break;
-                    }
-                    fsNew.Write(bytes, 0, readed);
-                } while (readed > 0);
-            }
-        }
+        //    int readed = 0;
+        //    using (
+        //        FileStream fileStream = new FileStream(@"C:\temp\tree.png", FileMode.Open, FileAccess.Read),
+        //        fsNew = new FileStream(@"C:\temp\treeNew.png", FileMode.Create, FileAccess.Write))
+        //    {
+        //        do
+        //        {
+        //            long position = fileStream.Position;
+        //            readed = fileStream.Read(bytes, 0, BUFFER_SIZE);
+        //            if (readed == 0)
+        //            {
+        //                break;
+        //            }
+        //            fsNew.Write(bytes, 0, readed);
+        //        } while (readed > 0);
+        //    }
+        //}
     }
 
     public class Login : IDisposable

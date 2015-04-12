@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace ProducerConsumerFileConsole
 {
-    public class ByteWriter
+    public class FileWriter
     {
-        private ByteBox _cell;         // Field to hold cell object to be used
-        private int _quantity = 1;  // Field for how many items to consume from cell
+        private ByteBox _box;
         private string _destinationFilePath;
-
         private Login _login;
 
-        public ByteWriter(ByteBox cell, int quantity, string destinationFilePath, Login login)
+        public FileWriter(ByteBox box, string destinationFilePath, Login login)
         {
-            _cell = cell;          // Pass in what cell object to be used
-            _quantity = int.MaxValue;// quantity;  // Pass in how many items to consume from cell
+            _box = box;
             _destinationFilePath = destinationFilePath;
             _login = login;
         }
@@ -27,19 +19,16 @@ namespace ProducerConsumerFileConsole
         {
             _login.Impersonate();
 
-
             using (FileStream fsNew = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write))
             {
+                int readCount = 0;
                 do
                 {
-                        // Consume the result by placing it in valReturned.
-                    byte[] result = _cell.ReadFromCell();
-                    if (result.Length == 0)
-                    {
-                        break;
-                    }
-                    fsNew.Write(result, 0, result.Length);
-                } while (true);
+                    // Withdraw bytes bytes and append them to the destination file.
+                    byte[] bytes = _box.WithdrawBytes();
+                    readCount = bytes.Length;
+                    fsNew.Write(bytes, 0, bytes.Length);
+                } while (readCount > 0);
             }
 
             _login.Dispose();
