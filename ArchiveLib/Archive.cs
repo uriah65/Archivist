@@ -1,9 +1,11 @@
-﻿using System;
+﻿using ArchiveLib.ReaderWriter;
+using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Principal;
+using System.Threading;
 
 namespace ArchiveLib
 {
@@ -266,6 +268,54 @@ namespace ArchiveLib
                 });
             }
         }
+
+
+        public void CopyToArchiveThreads(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true)
+        {
+            Login login = new Login();
+            login.Domain = _domain;
+            login.Account = _account;
+            login.Password = _password;
+
+            //int boxSize = (int)Math.Pow(2, 20); //1000000; // 1MB
+            int boxSize = 10000000;
+
+
+            BytesBox byteBox = new BytesBox();
+
+            FileReader reader = new FileReader(byteBox, boxSize, sourceFilePath, null);
+            FileWriter writer = new FileWriter(byteBox, destinationFilePath, login);
+
+            Thread readerThread = new Thread(new ThreadStart(reader.ThreadRun));
+            Thread writerThread = new Thread(new ThreadStart(writer.ThreadRun));
+
+            try
+            {
+                readerThread.Start();
+                writerThread.Start();
+
+                readerThread.Join();   // Join both threads with no timeout
+                                       // Run both until done.
+                writerThread.Join();
+                // threads producer and consumer have finished at this point.
+            //}
+            //catch (ThreadStateException e)
+            //{
+            //    Console.WriteLine(e);  // Display text of exception
+            //    result = 1;            // Result says there was an error
+            //}
+            //catch (ThreadInterruptedException e)
+            //{
+            //    Console.WriteLine(e);  // This exception means that the thread
+            //                           // was interrupted during a Wait
+            //    result = 1;            // Result says there was an error
+            //}
+            //catch (Exception ex)
+            //{
+            //}
+
+        }
+
 
         #endregion IArchive
     }

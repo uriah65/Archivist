@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
@@ -16,8 +17,11 @@ namespace ProducerConsumerFileConsole
         {
             int result = 0;   // Result initialized to say there is no error
 
-            string sourceFilePath = @"C:\temp\autumn.jpg";
-            string destinationFilePath = @"C:\temp\autumnNew.jpg";
+            //string sourceFilePath = @"C:\temp\autumn.jpg";
+            //string destinationFilePath = @"C:\temp\autumnNew.jpg";
+
+            string sourceFilePath = @"C:\temp\large.iso";
+            string destinationFilePath = @"C:\temp\largeNew.iso";
 
             string credentialsFilePath = @"C:\temp\credentials.txt";
             string[] lines = System.IO.File.ReadAllLines(credentialsFilePath);
@@ -28,6 +32,7 @@ namespace ProducerConsumerFileConsole
             login.Password = lines[2];
 
             int boxSize = (int) Math.Pow(2, 20); //1000000; // 1MB
+            //boxSize = boxSize * 10;
 
 
             BytesBox byteBox = new BytesBox();
@@ -40,6 +45,9 @@ namespace ProducerConsumerFileConsole
 
             try
             {
+                Stopwatch watch = new Stopwatch();
+                watch.Start();
+
                 readerThread.Start();
                 writerThread.Start();
 
@@ -47,6 +55,9 @@ namespace ProducerConsumerFileConsole
                                        // Run both until done.
                 writerThread.Join();
                 // threads producer and consumer have finished at this point.
+
+                Console.WriteLine("Finished in " + watch.ElapsedMilliseconds / 1000.00);
+
             }
             catch (ThreadStateException e)
             {
