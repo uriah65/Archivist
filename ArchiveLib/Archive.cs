@@ -215,12 +215,14 @@ namespace ArchiveLib
             });
         }
 
+        public int BLOCK_SIZE = (int)Math.Pow(2, 20) * 10;   // 10MB
+
         public void CopyToArchiveLarge(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true)
         {
             byte[] buffer = null;
 
 
-            long blockSize = 10000000;
+           
             long ln = (new FileInfo(sourceFilePath)).Length;
 
             using (var mmf = MemoryMappedFile.CreateFromFile(sourceFilePath, FileMode.Open, "Temp"))
@@ -242,8 +244,8 @@ namespace ArchiveLib
                     long i = 0;
                     do// for (int i = 0; i < ln; i++)
                     {
-                        offset = i * blockSize;
-                        length = blockSize;
+                        offset = i * BLOCK_SIZE;
+                        length = BLOCK_SIZE;
                         if (offset + length > ln)
                         {
                             length = ln - offset;
@@ -278,13 +280,12 @@ namespace ArchiveLib
             login.Password = _password;
 
             //int boxSize = (int)Math.Pow(2, 20); //1000000; // 1MB
-            int boxSize = 10000000;
-
+           
 
             BytesBox byteBox = new BytesBox();
 
-            FileReader reader = new FileReader(byteBox, boxSize, sourceFilePath, null);
-            FileWriter writer = new FileWriter(byteBox, boxSize, destinationFilePath, login);
+            FileReader reader = new FileReader(byteBox, BLOCK_SIZE, sourceFilePath, null);
+            FileWriter writer = new FileWriter(byteBox, BLOCK_SIZE, destinationFilePath, login);
 
             Thread readerThread = new Thread(new ThreadStart(reader.ThreadRun));
             Thread writerThread = new Thread(new ThreadStart(writer.ThreadRun));
