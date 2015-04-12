@@ -30,9 +30,9 @@ namespace ProducerConsumerFileConsole
             int boxSize = (int) Math.Pow(2, 20); //1000000; // 1MB
 
 
-            ByteBox byteBox = new ByteBox();
+            BytesBox byteBox = new BytesBox();
 
-            FileReader reader = new FileReader(byteBox, boxSize, sourceFilePath);  
+            FileReader reader = new FileReader(byteBox, boxSize, sourceFilePath, null);  
             FileWriter writer = new FileWriter(byteBox, destinationFilePath, login);  
 
             Thread readerThread = new Thread(new ThreadStart(reader.ThreadRun));

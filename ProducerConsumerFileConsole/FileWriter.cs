@@ -5,11 +5,11 @@ namespace ProducerConsumerFileConsole
 {
     public class FileWriter
     {
-        private ByteBox _box;
+        private BytesBox _box;
         private string _destinationFilePath;
         private Login _login;
 
-        public FileWriter(ByteBox box, string destinationFilePath, Login login)
+        public FileWriter(BytesBox box, string destinationFilePath, Login login)
         {
             _box = box;
             _destinationFilePath = destinationFilePath;

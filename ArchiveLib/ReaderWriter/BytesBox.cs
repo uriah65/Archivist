@@ -4,15 +4,17 @@ using System.Linq;
 using System.Security.Principal;
 using System.Threading;
 
-namespace ProducerConsumerFileConsole
+namespace ArchiveLib.ReaderWriter
 {
-    public class ByteBox
+    public class BytesBox
     {
         private bool readerFlag;  // state flag
+
         public string AbortMessage { get; private set; } // exception message
 
         // data
         private byte[] _bytes;
+
         private int _bytesInThebox;
 
         public void DepositBytes(byte[] bytes, int realSize, string abortMessage)

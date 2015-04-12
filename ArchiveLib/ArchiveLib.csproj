@@ -42,8 +42,12 @@
   <ItemGroup>
     <Compile Include="Archive.cs" />
     <Compile Include="IArchive.cs" />
+    <Compile Include="Login.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReaderWriter\BytesBox.cs" />
+    <Compile Include="ReaderWriter\FileReader.cs" />
+    <Compile Include="ReaderWriter\FileWriter.cs" />
     <Compile Include="SafeTokenHandle.cs" />
   </ItemGroup>
   <ItemGroup>

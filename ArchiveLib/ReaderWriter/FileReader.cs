@@ -1,19 +1,21 @@
 ﻿using System;
 using System.IO;
 
-namespace ProducerConsumerFileConsole
+namespace ArchiveLib.ReaderWriter
 {
     public class FileReader
     {
-        private ByteBox _box;
+        private BytesBox _box;
         private int _boxSize;
         private string _sourceFilePath;
+        private Login _login;
 
-        public FileReader(ByteBox box, int boxSize, string sourceFilePath)
+        public FileReader(BytesBox box, int boxSize, string sourceFilePath, Login login)
         {
             _box = box;
             _boxSize = boxSize;
             _sourceFilePath = sourceFilePath;
+            _login = login;
         }
 
         public void ThreadRun()
@@ -22,6 +24,12 @@ namespace ProducerConsumerFileConsole
             FileStream fileStream = null;
             try
             {
+                if (_login != null)
+                {
+                    // we impersonate if _login object is provided.
+                    _login.Impersonate();
+                }
+
                 byte[] bytes = new byte[_boxSize];
 
                 fileStream = new FileStream(_sourceFilePath, FileMode.Open, FileAccess.Read);
@@ -50,6 +58,10 @@ namespace ProducerConsumerFileConsole
                 if (fileStream != null)
                 {
                     fileStream.Dispose();
+                }
+                if (_login != null)
+                {
+                    _login.Dispose();
                 }
             }
         }
