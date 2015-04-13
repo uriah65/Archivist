@@ -1,23 +1,20 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Principal;
+﻿using System.Linq;
 using System.Threading;
 
 namespace ArchiveLib.ReaderWriter
 {
     public class BytesBox
     {
-        private bool readerFlag;  // state flag
+        private bool depositIsReady;  // state flag
 
         public string AbortMessage { get; private set; } // exception message
 
         // data
         private byte[] _bytes;
 
-        private int _bytesInThebox;
+        private int _bytesLength;
 
-        public void DepositBytes(byte[] bytes, int realSize, string abortMessage)
+        public void DepositBytes(byte[] bytes, int bytesLength, string abortMessage)
         {
             lock (this)
             {
@@ -26,39 +23,25 @@ namespace ArchiveLib.ReaderWriter
                     AbortMessage = abortMessage;
                 }
 
-                if (readerFlag)
+                if (depositIsReady)
                 {
-                    try
-                    {
-                        Monitor.Wait(this);
-                    }
-                    catch (SynchronizationLockException e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                    catch (ThreadInterruptedException e)
-                    {
-                        Console.WriteLine(e);
-                    }
+                    Monitor.Wait(this);
                 }
 
                 if (abortMessage == null)
                 {
-                    _bytesInThebox = realSize;
+                    _bytesLength = bytesLength;
                     _bytes = bytes.ToArray();
-
-                    Debug.WriteLine("Produce: {0} by {1}", _bytes.Length, WindowsIdentity.GetCurrent().Name);
+                    //Debug.WriteLine("Deposited: {0} by {1}", _bytes.Length, WindowsIdentity.GetCurrent().Name);
                 }
 
-                readerFlag = true;
+                depositIsReady = true;
                 Monitor.Pulse(this);
-            }   // Exit synchronization block
+            }
         }
 
         public int WithdrawBytes(ref byte[] bytes, string abortMessage)
         {
-            //byte[] result = null;
-
             lock (this)
             {
                 if (abortMessage != null)
@@ -66,35 +49,23 @@ namespace ArchiveLib.ReaderWriter
                     AbortMessage = abortMessage;
                 }
 
-                if (readerFlag == false)
+                if (depositIsReady == false)
                 {
-                    try
-                    {
-                        Monitor.Wait(this);
-                    }
-                    catch (SynchronizationLockException e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                    catch (ThreadInterruptedException e)
-                    {
-                        Console.WriteLine(e);
-                    }
+                    Monitor.Wait(this);
                 }
 
-                //result = new byte[_bytesInThebox];
-                for (int i = 0; i < _bytesInThebox; i++)
+                for (int i = 0; i < _bytesLength; i++)
                 {
                     bytes[i] = _bytes[i];
                 }
 
-                Debug.WriteLine("Consume: {0}", _bytesInThebox);
-                readerFlag = false;
+                //Debug.WriteLine("Withdrawn: {0}", _bytesLength);
+                depositIsReady = false;
 
                 Monitor.Pulse(this);
-            }   // Exit synchronization block
+            }
 
-            return _bytesInThebox;
+            return _bytesLength;
         }
     }
 }

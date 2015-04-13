@@ -20,7 +20,6 @@ namespace ArchiveLib.ReaderWriter
 
         public void ThreadRun()
         {
-            //int _exceptionCount = 2;
             FileStream fileStream = null;
             try
             {
@@ -41,8 +40,6 @@ namespace ArchiveLib.ReaderWriter
                     {
                         break;
                     }
-
-                    //if (--_exceptionCount == 0) throw new ApplicationException("Test exception in reader");
 
                     // read portion of the bytes from the source file and deposit it in the box.
                     readCount = fileStream.Read(bytes, 0, _boxSize);

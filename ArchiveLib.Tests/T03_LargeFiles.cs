@@ -20,6 +20,8 @@ namespace ArchiveLib.Tests
         [TestMethod]
         public void Copy_To_Archive_Large()
         {
+            return; 
+
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
@@ -27,7 +29,7 @@ namespace ArchiveLib.Tests
 
             Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword);
 
-            archive.CopyToArchiveLarge(sourceFilePath, archiveFilePath);
+            archive.CopyToArchive_MemoryFile(sourceFilePath, archiveFilePath);
             FileInfo info = archive.GetFileInfo(archiveFilePath);
             Assert.AreEqual(filelength, info.Length, "File has not been copied to archive.");
 
@@ -39,6 +41,8 @@ namespace ArchiveLib.Tests
         [TestMethod]
         public void Copy_To_Archive_Threads()
         {
+            return;
+
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
@@ -46,7 +50,7 @@ namespace ArchiveLib.Tests
 
             Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword);
 
-            archive.CopyToArchiveThreads(sourceFilePath, archiveFilePath);
+            archive.CopyWithThreads(sourceFilePath, archiveFilePath, true);
             FileInfo info = archive.GetFileInfo(archiveFilePath);
             Assert.AreEqual(filelength, info.Length, "File has not been copied to archive.");
 

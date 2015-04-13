@@ -26,14 +26,14 @@ namespace ArchiveLib.Console
            
 
             Archive archive = new Archive(userDomain, userName, userPassword);
-            archive.CopyToArchiveThreads(sourceFilePath, destinationFilePath);
+            archive.CopyWithThreads(sourceFilePath, destinationFilePath, true);
 
             System.Console.WriteLine("Done 1: " + sw.ElapsedMilliseconds / 1000.0);
             System.Console.ReadKey();
 
 
             archive = new Archive(userDomain, userName, userPassword);
-            archive.CopyToArchiveLarge(sourceFilePath, destinationFilePath);
+            archive.CopyToArchive_MemoryFile(sourceFilePath, destinationFilePath);
 
             System.Console.WriteLine("Done 2: " + sw.ElapsedMilliseconds / 1000.0);
             System.Console.ReadKey();

@@ -20,12 +20,10 @@ namespace ArchiveLib.ReaderWriter
 
         public void ThreadRun()
         {
-            //int exceptionCount = 2;
             byte[] bytes = new byte[_boxSize];
             FileStream fsNew = null;
             try
             {
-               
                 if (_login != null)
                 {
                     // we impersonate if _login object is provided.
@@ -37,18 +35,14 @@ namespace ArchiveLib.ReaderWriter
                 int readCount = 0;
                 do
                 {
-                    //if (--exceptionCount == 0) throw new ApplicationException("Test exception in Writer");
                     if (_box.AbortMessage != null)
                     {
                         break;
                     }
 
                     // Withdraw bytes bytes and append them to the destination file.
-                    //byte[] bytes = _box.WithdrawBytes(null);
-                    //readCount = bytes.Length;
                     readCount = _box.WithdrawBytes(ref bytes, null);
                     fsNew.Write(bytes, 0, bytes.Length);
-                    //fsNew.Flush();
                 } while (readCount > 0);
             }
             catch (Exception ex)
