@@ -29,6 +29,45 @@ namespace ArchiveLib
 
         public T WrapAction<T>(Func<T> action)
         {
+            Login _login = null;
+            Exception temp = null;
+            try
+            {
+                _login = new Login();
+                _login.Domain = _domain;
+                _login.Account = _account;
+                _login.Password = _password;
+                _login.Impersonate();
+                try
+                {
+                    return action();
+                }
+                catch (Exception ex)
+                {
+                    temp = ex;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                if (_login != null)
+                {
+                    _login.Dispose();
+                }
+            }
+
+            if (temp != null)
+            {
+                throw temp;
+            }
+
+            return default(T);
+        }
+
+        public T WrapAction_Old<T>(Func<T> action)
+        {
             bool success = NativeMethods.LogonUser(_account, _domain, _password, NativeMethods.LogonTypes.Interactive, NativeMethods.LogonProviders.Default, out _safeTokenHandle);
             if (!success)
             {
