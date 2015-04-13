@@ -84,78 +84,12 @@ namespace ArchiveLib
 
         public void CopyToArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true)
         {
-
             CopyWithThreads(sourceFilePath, destinationFilePath, true, allowOverwrite);
-
-
-            //byte[] buffer = null;
-
-            //MemoryStream ms = new MemoryStream();
-            //using (FileStream fs = File.OpenRead(sourceFilePath))
-            //{
-            //    buffer = new byte[fs.Length];
-            //    int bytesRead = 0;
-            //    do
-            //    {
-            //        bytesRead = fs.Read(buffer, 0, buffer.Length);
-            //        ms.Write(buffer, 0, bytesRead);
-            //    } while (bytesRead != 0);
-            //}
-
-            //WrapAction<object>(() =>
-            //{
-            //    if (allowOverwrite == false)
-            //    {
-            //        if (File.Exists(destinationFilePath))
-            //        {
-            //            throw new ApplicationException("File already exists.");
-            //        }
-            //    }
-
-            //    //throw new ApplicationException("Text exception.");
-
-            //    FileStream destinationFs = new FileStream(destinationFilePath, FileMode.Create);
-            //    destinationFs.Write(buffer, 0, buffer.Length);
-            //    destinationFs.Close();
-
-            //    return null;
-            //});
         }
 
         public void CopyFromArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true)
         {
             CopyWithThreads(sourceFilePath, destinationFilePath, false, allowOverwrite);
-
-            //if (allowOverwrite == false && File.Exists(destinationFilePath))
-            //{
-            //    throw new ApplicationException("Destination file already exist.");
-            //}
-
-            //byte[] buffer = WrapAction<byte[]>(() =>
-            //{
-            //    if (File.Exists(sourceFilePath) == false)
-            //    {
-            //        throw new ApplicationException("Source file was not found.");
-            //    }
-
-            //    byte[] fileBuffer = null;
-            //    MemoryStream ms = new MemoryStream();
-            //    using (FileStream fs = File.OpenRead(sourceFilePath))
-            //    {
-            //        fileBuffer = new byte[fs.Length];
-            //        int bytesRead = 0;
-            //        do
-            //        {
-            //            bytesRead = fs.Read(fileBuffer, 0, fileBuffer.Length);
-            //            ms.Write(fileBuffer, 0, bytesRead);
-            //        } while (bytesRead != 0);
-            //    }
-            //    return fileBuffer;
-            //});
-
-            //FileStream destinationFs = new FileStream(destinationFilePath, FileMode.Create);
-            //destinationFs.Write(buffer, 0, buffer.Length);
-            //destinationFs.Close();
         }
 
         public void CopyWithingArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true, bool deleteSource = false)
