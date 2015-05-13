@@ -13,7 +13,6 @@ namespace ArchiveLib.Tests
         //private const string largefileName = "autumn.jpg";
         private const string sourceFilePath = @"C:\temp\autumn.jpg";
 
-
         //private const string archiveFilePath = ConstantsPR.PATH_ARCHIVE + @"\" + largefileName;
         private const string archiveFilePath = @"C:\temp\autumnNew.jpg";
 
