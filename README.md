@@ -1,4 +1,4 @@
 # Archivist
-C# class to manage files in a secure folder
+C# class simplify file operations between different permission zones.
  
- UNDER DEVELOPMENT
+[description](http://wp.me/p5XBkB-2b)
