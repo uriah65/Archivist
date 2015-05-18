@@ -24,7 +24,7 @@ namespace ArchiveLib.Tests
 
             Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword);
 
-            archive.CopyToArchive(sourceFilePath, archiveFilePath);
+            archive.CopyFileTo(sourceFilePath, archiveFilePath);
             FileInfo info = archive.GetFileInfo(archiveFilePath);
             Assert.AreEqual(true, info.Exists, "File has not been copied to archive.");
 
@@ -39,7 +39,7 @@ namespace ArchiveLib.Tests
             string destinationFilePath = ConstantsPR.PATH_COMMON + @"\t.fromarchive.txt";
 
             Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword);
-            archive.CopyFromArchive(sourceFilePath, destinationFilePath);
+            archive.CopyFileFrom(sourceFilePath, destinationFilePath);
 
             FileInfo info =new FileInfo(destinationFilePath);
             Assert.AreEqual(true, info.Exists, "File has not been copied from archive.");
@@ -58,11 +58,11 @@ namespace ArchiveLib.Tests
 
             Archive archive = new Archive(ConstantsPR.UserDomain, ConstantsPR.UserName, ConstantsPR.UserPassword);
 
-            archive.CopyToArchive(sourceFilePath, archiveFilePath);
+            archive.CopyFileTo(sourceFilePath, archiveFilePath);
             FileInfo info = archive.GetFileInfo(archiveFilePath);
             Assert.AreEqual(true, info.Exists, "File has not been copied to archive.");
 
-            archive.DeleteInArchive(archiveFilePath);
+            archive.DeleteFile(archiveFilePath);
             info = archive.GetFileInfo(archiveFilePath);
             Assert.AreEqual(false, info.Exists, "File has not been deleted from archive.");
 

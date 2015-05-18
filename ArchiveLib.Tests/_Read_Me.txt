@@ -1,10 +1,11 @@
-﻿Tests are expecting 
+﻿Too run tests, please 
 
-1). file 'credentials.txt' in C:\Temp that contains 3 lines
+1). Create file 'ArchiveLibCredentials.txt' in C:\Temp that contains 3 lines
 
 domain
 username
 userpassword
 
 
-2). Test folder Archive should be accessible to above user, but denied for current user.
+2). Allow full access to the test folder ArchiveLib.Tests\Archive for the credentials above.
+3). Deny current user access to the folder above.

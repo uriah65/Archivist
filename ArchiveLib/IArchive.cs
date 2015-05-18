@@ -13,19 +13,14 @@ namespace ArchiveLib
 
         FileInfo GetFileInfo(string archiveFilePath);
 
-        void CopyToArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true);
+        void CopyFileTo(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true);
 
-        void CopyFromArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true);
+        void CopyFileFrom(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true);
 
-        void DeleteInArchive(string destinationFilePath, bool exceptionIfNotFound = false);
+        void CopyFileWithin(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true, bool deleteSource = false);
 
-        void CopyWithingArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true, bool deleteSource = false);
+        void DeleteFile(string archiveFile, bool exceptionIfNotFound = false);
 
-        void InsureArchiveDirectory(string destinationDirectory);
-
-        //void CopyToArchiveBt();
-        //void CopyFromArchiveBt();
-        //void InsureArchiveDirectory();
-
+        void InsureDirectory(string archiveDirectory);       
     }
 }

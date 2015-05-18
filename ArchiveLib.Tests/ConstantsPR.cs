@@ -13,7 +13,7 @@
 
         static ConstantsPR()
         {
-            string path = @"C:\temp\credentials.txt";
+            string path = @"C:\temp\ArchiveLibCredentials.txt";
             string[] lines = System.IO.File.ReadAllLines(path);
             UserDomain = lines[0];
             UserName = lines[1];

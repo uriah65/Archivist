@@ -32,7 +32,7 @@ namespace ArchiveLib.Tests
             FileInfo info = archive.GetFileInfo(archiveFilePath);
             Assert.AreEqual(filelength, info.Length, "File has not been copied to archive.");
 
-            archive.DeleteInArchive(archiveFilePath);
+            archive.DeleteFile(archiveFilePath);
 
             Debug.WriteLine("Done: " + sw.ElapsedMilliseconds / 1000.0);
         }
@@ -53,7 +53,7 @@ namespace ArchiveLib.Tests
             FileInfo info = archive.GetFileInfo(archiveFilePath);
             Assert.AreEqual(filelength, info.Length, "File has not been copied to archive.");
 
-            archive.DeleteInArchive(archiveFilePath);
+            archive.DeleteFile(archiveFilePath);
 
             Debug.WriteLine("Done: " + sw.ElapsedMilliseconds / 1000.0);
         }

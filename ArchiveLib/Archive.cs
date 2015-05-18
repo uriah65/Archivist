@@ -121,17 +121,17 @@ namespace ArchiveLib
             return info;
         }
 
-        public void CopyToArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true)
+        public void CopyFileTo(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true)
         {
             CopyWithThreads(sourceFilePath, destinationFilePath, true, allowOverwrite);
         }
 
-        public void CopyFromArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true)
+        public void CopyFileFrom(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true)
         {
             CopyWithThreads(sourceFilePath, destinationFilePath, false, allowOverwrite);
         }
 
-        public void CopyWithingArchive(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true, bool deleteSource = false)
+        public void CopyFileWithin(string sourceFilePath, string destinationFilePath, bool allowOverwrite = true, bool deleteSource = false)
         {
             WrapAction<object>(() =>
             {
@@ -145,11 +145,11 @@ namespace ArchiveLib
             });
         }
 
-        public void DeleteInArchive(string destinationFilePath, bool exceptionIfNotFound = false)
+        public void DeleteFile(string archiveFile, bool exceptionIfNotFound = false)
         {
             WrapAction<object>(() =>
             {
-                FileInfo info = new FileInfo(destinationFilePath);
+                FileInfo info = new FileInfo(archiveFile);
                 if (!info.Exists && exceptionIfNotFound)
                 {
                     throw new ApplicationException("File has not been found.");
@@ -157,17 +157,17 @@ namespace ArchiveLib
 
                 if (info.Exists)
                 {
-                    File.Delete(destinationFilePath);
+                    File.Delete(archiveFile);
                 }
                 return null;
             });
         }
 
-        public void InsureArchiveDirectory(string destinationDirectory)
+        public void InsureDirectory(string archiveDirectory)
         {
             WrapAction<object>(() =>
             {
-                DirectoryInfo info = new DirectoryInfo(destinationDirectory);
+                DirectoryInfo info = new DirectoryInfo(archiveDirectory);
                 if (!info.Exists)
                 {
                     info.Create();
